@@ -6,13 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.it.dto.PatchDTO;
 import com.it.dto.SignupDTO;
 import com.it.service.SignupService;
 
@@ -23,9 +26,23 @@ public class SignupRestApiController {
 	// If one bean wanted to use other bean
 	@Autowired
 	private SignupService signupService;
+
+	@PutMapping("/signups")
+	@ResponseStatus(HttpStatus.OK)
+	public SignupDTO updateSignup(@RequestBody SignupDTO signupDTO) {
+		signupService.update(signupDTO);
+		return signupDTO;
+	}
+	
+	@PatchMapping("/signups")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void pupdateSignup(@RequestBody PatchDTO patchDTO) {
+		signupService.patchUpdate(patchDTO);
+	}
 	
 	
 	@PostMapping("/signups")
+	@ResponseStatus(HttpStatus.CREATED)
 	public SignupDTO createSignup(@RequestBody SignupDTO signupDTO) {
 		int pid=signupService.save(signupDTO);
 		signupDTO.setPid(pid);

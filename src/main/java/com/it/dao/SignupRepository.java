@@ -9,5 +9,6 @@ import com.it.dao.entity.Signup;
 public interface SignupRepository extends JpaRepository<Signup, Integer> {
 	
 	public List<Signup> findByUsernameLikeOrEmailLikeOrMobileLike(String username,String email,String mobile);
+	
 
 }
