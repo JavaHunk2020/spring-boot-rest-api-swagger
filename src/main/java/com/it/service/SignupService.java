@@ -5,18 +5,25 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.it.dao.SignupRepository;
 import com.it.dao.entity.Signup;
 import com.it.dto.PatchDTO;
 import com.it.dto.SignupDTO;
 import com.it.exception.ResourceNotFoundException;
-import com.it.exception.SignupNotFoundException;
 
 @Service
 public class SignupService {
+	
+	@Value("${rest.api.base.url}")
+	private String restBaseUrl;
 
 	// If one bean wanted to use other bean
 	@Autowired
@@ -71,9 +78,26 @@ public class SignupService {
 		return dtos;
 	}
 
-	public List<SignupDTO> findAll() {
-		List<Signup> signups = signupDao.findAll();
+	public List<SignupDTO> findAll()  {
+		//WRITE CODE TO FETCH DATA FROM OTHER REST API
+		//http://localhost:9090/v3/signups
+		//REST API - I have to access data from REST API
+		//URI= 
 		List<SignupDTO> dtos = new ArrayList<>();
+		try {
+			RestTemplate restTemplate = new RestTemplate();
+			ResponseEntity<List<SignupDTO>> signupResponseList = restTemplate.exchange(
+					restBaseUrl+"v3/signups", HttpMethod.GET, null,
+					new ParameterizedTypeReference<List<SignupDTO>>() {
+					});
+
+			List<SignupDTO> externalList = signupResponseList.getBody();
+			dtos.addAll(externalList);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	
+		List<Signup> signups = signupDao.findAll();
 		for (Signup signup : signups) {
 			SignupDTO signupDTO = new SignupDTO();
 			BeanUtils.copyProperties(signup, signupDTO);
