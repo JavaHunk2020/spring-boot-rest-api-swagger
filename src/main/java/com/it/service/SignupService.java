@@ -28,6 +28,9 @@ public class SignupService {
 	// If one bean wanted to use other bean
 	@Autowired
 	private SignupRepository signupDao;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Transactional
 	public void patchUpdate(PatchDTO patchDTO) {
@@ -83,11 +86,11 @@ public class SignupService {
 		//http://localhost:9090/v3/signups
 		//REST API - I have to access data from REST API
 		//URI= 
+		System.out.println("REST API IS BEING CALLED!!!!!!!!!!!!!!!!");
 		List<SignupDTO> dtos = new ArrayList<>();
 		try {
-			RestTemplate restTemplate = new RestTemplate();
-			ResponseEntity<List<SignupDTO>> signupResponseList = restTemplate.exchange(
-					restBaseUrl+"v3/signups", HttpMethod.GET, null,
+			ResponseEntity<List<SignupDTO>> signupResponseList = this.restTemplate.exchange(
+					restBaseUrl+"/v3/signups", HttpMethod.GET, null,
 					new ParameterizedTypeReference<List<SignupDTO>>() {
 					});
 
@@ -103,6 +106,8 @@ public class SignupService {
 			BeanUtils.copyProperties(signup, signupDTO);
 			dtos.add(signupDTO);
 		}
+		
+		System.out.println("REST API IS  CALLED SUCCESFULLY!!!!!!!!!!!!!!!!");
 		return dtos;
 	}
 

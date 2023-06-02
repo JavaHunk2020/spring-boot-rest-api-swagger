@@ -19,9 +19,23 @@
    <properties>
 		<java.version>11</java.version>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
+		  <spring-cloud.version>Hoxton.SR5</spring-cloud.version>
   </properties>
   
   <dependencies>
+  
+  
+		   <!-- This is for monitor health of the application -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        
+        
+        <dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
       
       <dependency>
 			<!-- Setup Spring Boot
@@ -82,6 +96,20 @@
   
   
   </dependencies>
+  
+  
+  
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
   
   <build>
 		<finalName>${project.artifactId}</finalName>
