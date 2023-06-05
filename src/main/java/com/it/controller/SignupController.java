@@ -1,10 +1,14 @@
 package com.it.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.it.dto.SignupDTO;
+import com.it.dto.UserDTO;
 import com.it.service.SignupService;
 
 @Controller
@@ -21,6 +26,24 @@ public class SignupController {
 	// If one bean wanted to use other bean
 	@Autowired
 	private SignupService signupService;
+	
+	@GetMapping("/auth")
+	public String showLogin() {
+		return "login";
+	}
+	
+	
+	@PostMapping("/login")
+	public String login(@ModelAttribute UserDTO userDTO,Model model) {
+		boolean result=signupService.verfiyUser(userDTO);
+		if(result) {
+			return "home";
+		}else {
+			model.addAttribute("message","Username and password are not correct");
+			return "login";
+		}
+	}
+	
 
 	@GetMapping("/signups")
 	public String showSignups(Model model) {

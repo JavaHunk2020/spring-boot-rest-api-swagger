@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.it.controller.AppResponse;
 import com.it.dao.SignupRepository;
 import com.it.dao.entity.Signup;
 import com.it.dto.PatchDTO;
 import com.it.dto.SignupDTO;
+import com.it.dto.UserDTO;
 import com.it.exception.ResourceNotFoundException;
 
 @Service
@@ -24,6 +26,9 @@ public class SignupService {
 	
 	@Value("${rest.api.base.url}")
 	private String restBaseUrl;
+	
+	@Value("${rest.login.base.url}")
+	private String loginBaseUrl;
 
 	// If one bean wanted to use other bean
 	@Autowired
@@ -80,6 +85,25 @@ public class SignupService {
 		}
 		return dtos;
 	}
+	
+	
+	public boolean verfiyUser(UserDTO userDTO)  {
+		//WRITE CODE TO FETCH DATA FROM OTHER REST API
+		//http://localhost:9090/v3/signups
+		//REST API - I have to access data from REST API
+		//URI= 
+		System.out.println("REST API IS BEING CALLED!!!!!!!!!!!!!!!!");
+		List<SignupDTO> dtos = new ArrayList<>();
+		try {
+			
+			ResponseEntity<AppResponse> result = restTemplate.postForEntity(loginBaseUrl+"/v4/auth", userDTO, AppResponse.class);
+			AppResponse  response= result.getBody();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		return true;
+	}		
 
 	public List<SignupDTO> findAll()  {
 		//WRITE CODE TO FETCH DATA FROM OTHER REST API
