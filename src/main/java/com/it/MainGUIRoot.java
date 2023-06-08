@@ -9,9 +9,9 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-public class MainRoot {
+public class MainGUIRoot {
 	public static void main(String[] args) {
-		SpringApplication.run(MainRoot.class, args);
+		SpringApplication.run(MainGUIRoot.class, args);
 	}
 	
 	//RestTemplate instance is manage by spring container

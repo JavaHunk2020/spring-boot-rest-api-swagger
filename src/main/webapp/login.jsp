@@ -7,6 +7,63 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+  <script type="text/javascript">
+  
+     function  deleteMessage() {
+	        document.getElementById("emessage").innerHTML="";
+     }
+     
+     
+     
+     function  checkUser() {
+	       let usernamev=document.getElementById("username").value;
+	       let passwordv=document.getElementById("password").value;
+	       
+	       //I HAVE TO WRITE FOR AJAX
+	       const requestOptions = {
+    				method: 'POST',
+  			  headers: { 
+       					 'Content-Type': 'application/json'
+       					'Accept': 'application/json'
+			    },
+               body: JSON.stringify({ username:usernamev,password:passwordv})
+         };
+	       
+fetch('https://reqres.in/api/articles', requestOptions)
+    .then(response => response.json())
+    .then(data => element.innerHTML = data.id);
+	       
+	      
+	       let message="";
+	       document.getElementById("cs").innerHTML=message;
+    	   
+ } 
+  
+       function  validate() {
+    	       let usernamev=document.getElementById("username").value;
+    	       if(usernamev.length==0){
+    	    	    document.getElementById("emessage").innerHTML="Username cannot be empty";
+    	    	    document.getElementById("username").focus();
+    	    	   return;
+    	       }
+    	       
+    	       let passwordv=document.getElementById("password").value;
+    	       
+    	       if(passwordv.length==0){
+   	    	    document.getElementById("emessage").innerHTML="Password cannot be empty";
+   	    	    document.getElementById("password").focus();
+   	    	   return;
+   	       }
+    	   
+    	    //Now I am submitting form through JavaScript code   
+    	   document.forms[0].submit();
+    	  
+       } 
+          
+     
+  </script>
+  
 </head>
 <body>
    <header style="background-color: yellow;height: 30px;">
@@ -20,29 +77,33 @@
           <img  src="students_schoool_footer2.png"  style="height: 180px;"/>
          <hr/>
          
-         <span style="color:red;font-weight: bold;font-size: 20px;">${message}</span>
+         <span style="color:red;font-weight: bold;font-size: 20px;"  id="emessage">
+         ${message}</span>
         
          <form action="login" method="post">
          
           <div class="form-group" style="width: 60%">
             <label>Username</label>
-            <input type="text"  name="username" class="form-control">
-         
+            <input onkeypress="deleteMessage();" type="text"  id="username"  name="username" class="form-control">
+           
          </div>
          
          <div class="form-group" style="width: 60%">
             <label>Password</label>
-            <input type="password" name="password" class="form-control">
+            <input onkeypress="deleteMessage();" id="password" type="password" name="password" class="form-control">
          </div>
          
            <div class="form-group" style="width: 60%">
-			 	 <button type="submit" class="btn btn-primary">Login</button>
+			 	 <button type="button" class="btn btn-primary" onclick="validate();">Login</button>
               <button type="reset" class="btn btn-danger">Clear</button>
                      <a href="signups">
                           <button type="button" class="btn btn-warning">All Data!</button>
                      </a>
+                     
+                   <button type="button" class="btn btn-primary" onclick="checkUser();">Check!!!!</button>
          </div>
          </form>
+         <span id="cs" style="color:red;font-size: 22px;font-weight: bold;">Coming Soon</span>
  	  
  </div>
 
