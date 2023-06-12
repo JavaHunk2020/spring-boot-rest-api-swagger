@@ -1,5 +1,6 @@
 package com.it.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,9 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.RestTemplate;
 
 import com.it.controller.AppResponse;
@@ -70,7 +75,26 @@ public class SignupService {
 	public int save(SignupDTO signupDTO) {
 		Signup signup = new Signup();
 		BeanUtils.copyProperties(signupDTO, signup);
+		signup.setDoe(new Timestamp(new java.util.Date().getTime()));
 		Signup dsignup = signupDao.save(signup);
+		//Making TWO Rest callss
+		/*
+		 * @PostMapping("/signups")
+		 * 
+		 * @ResponseStatus(HttpStatus.CREATED) public SignupDTO
+		 * createSignup(@RequestBody SignupDTO signupDTO) { int
+		 * pid=signupService.save(signupDTO); signupDTO.setPid(pid); return signupDTO; }
+		 */
+		//Login api
+		UserDTO userDTO=new UserDTO();
+		userDTO.setUsername(signupDTO.getUsername());
+		userDTO.setPassword(signupDTO.getPassword());
+		ResponseEntity<AppResponse> result = restTemplate.postForEntity(loginBaseUrl+"/v4/cauth", userDTO, AppResponse.class);
+		AppResponse  response= result.getBody();
+		
+		ResponseEntity<SignupDTO> resultSignup = restTemplate.postForEntity(restBaseUrl+"/v3/signups", signupDTO, SignupDTO.class);
+		SignupDTO  response2= resultSignup.getBody();
+		
 		return dsignup.getPid();
 	}
 

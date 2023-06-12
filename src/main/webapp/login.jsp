@@ -10,6 +10,8 @@
   
   <script type="text/javascript">
   
+     let contextPath="${pagecontext.request.contextpath}";
+  
      function  deleteMessage() {
 	        document.getElementById("emessage").innerHTML="";
      }
@@ -17,6 +19,7 @@
      
      
      function  checkUser() {
+    	 
 	       let usernamev=document.getElementById("username").value;
 	       let passwordv=document.getElementById("password").value;
 	       
@@ -24,20 +27,23 @@
 	       const requestOptions = {
     				method: 'POST',
   			  headers: { 
-       					 'Content-Type': 'application/json'
-       					'Accept': 'application/json'
+       					  'Content-Type': 'application/json',
+       					  'Accept': 'application/json'
 			    },
                body: JSON.stringify({ username:usernamev,password:passwordv})
          };
 	       
-fetch('https://reqres.in/api/articles', requestOptions)
-    .then(response => response.json())
-    .then(data => element.innerHTML = data.id);
-	       
-	      
-	       let message="";
-	       document.getElementById("cs").innerHTML=message;
-    	   
+	       //AJAX CALL
+		fetch(contextPath+'/auth', requestOptions)
+		    .then(response => response.json())
+		    .then(data => {
+		    	 console.log(data);
+		    	 if(data.code==='200') {
+		    		 document.getElementById("cs").innerHTML="Aahah username and password matched";
+		    	 }else{
+		    		 document.getElementById("cs").innerHTML="Sorry this is not correct, try once again!";
+		    	 }
+		    });
  } 
   
        function  validate() {

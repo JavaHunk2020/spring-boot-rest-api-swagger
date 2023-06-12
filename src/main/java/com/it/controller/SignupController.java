@@ -1,14 +1,10 @@
 package com.it.controller;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.it.dto.SignupDTO;
 import com.it.dto.UserDTO;
@@ -27,6 +24,21 @@ public class SignupController {
 	// If one bean wanted to use other bean
 	@Autowired
 	private SignupService signupService;
+	
+	@PostMapping("/auth")
+	public @ResponseBody  AppResponse checkUser(@RequestBody  UserDTO userDTO) {
+		boolean result=signupService.verfiyUser(userDTO);
+		AppResponse appResponse=new AppResponse();
+		if(result) {
+			appResponse.setCode("200");
+			appResponse.setMessage("success");
+		}else {
+			appResponse.setCode("404");
+			appResponse.setMessage("Username and password are not correct");
+		}
+		return appResponse;
+	}
+
 	
 	@GetMapping("/auth")
 	public String showLogin() {
