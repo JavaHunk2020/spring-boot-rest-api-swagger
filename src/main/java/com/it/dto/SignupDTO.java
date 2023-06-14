@@ -11,7 +11,18 @@ public class SignupDTO {
 	String email;
 	String address;
 	private Timestamp doe;
+	private String serviceName;
 	
+	
+	
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+
 	public SignupDTO() {}
 
 	public SignupDTO(String username, String password, String mobile, String email, String address) {

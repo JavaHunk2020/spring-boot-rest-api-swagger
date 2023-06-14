@@ -23,6 +23,8 @@
          <form action="esignup" method="post">
          
           <input type="hidden" name="pid" value="${dto.pid}">
+          <input type="hidden" name="serviceName" value="${param.serviceName}">
+          <h4>Service Name  :  <b style="color: red">${param.serviceName}</b></h4>
           <div class="form-group" style="width: 60%">
             <label>Username</label>
             <input type="text"  name="username" class="form-control" value="${dto.username}">

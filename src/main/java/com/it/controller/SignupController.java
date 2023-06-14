@@ -50,7 +50,7 @@ public class SignupController {
 	public String login(@ModelAttribute UserDTO userDTO,Model model) {
 		boolean result=signupService.verfiyUser(userDTO);
 		if(result) {
-			return "home";
+			return "redirect:/signups";
 		}else {
 			model.addAttribute("message","Username and password are not correct");
 			return "login";
@@ -82,7 +82,8 @@ public class SignupController {
 	@PostMapping("/esignup")
 	public String update(@ModelAttribute SignupDTO signupDTO,Model model) {
 		
-		
+		signupService.update(signupDTO);
+				
 		List<SignupDTO> dtos = signupService.findAll();
 		 model.addAttribute("signups", dtos);
 		//I have to go to next JSP
@@ -91,9 +92,9 @@ public class SignupController {
 	
 	
 	@GetMapping("esignup")
-	public String editUpdate(@RequestParam int pid,@ModelAttribute SignupDTO signupDTO,Model model) {
+	public String editUpdate(@RequestParam int pid,@RequestParam String serviceName,@ModelAttribute SignupDTO signupDTO,Model model) {
 		 
-		SignupDTO dto =signupService.findByPid(pid);
+		SignupDTO dto =signupService.findByPid(pid,serviceName);
 		model.addAttribute("dto", dto);
 		
 		return "esignup";

@@ -4,18 +4,18 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.client.RestTemplate;
 
 import com.it.controller.AppResponse;
@@ -25,6 +25,7 @@ import com.it.dto.PatchDTO;
 import com.it.dto.SignupDTO;
 import com.it.dto.UserDTO;
 import com.it.exception.ResourceNotFoundException;
+import com.netflix.discovery.shared.Application;
 
 @Service
 public class SignupService {
@@ -41,6 +42,18 @@ public class SignupService {
 	
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	
+	 @Autowired
+	    private DiscoveryClient discoveryClient;
+	 
+	 @PostConstruct
+	 public void init() {
+		 List<String> applications = discoveryClient.getServices();
+		 System.out.println("#)#)");
+	 }
+	 
+	 
 
 	@Transactional
 	public void patchUpdate(PatchDTO patchDTO) {
@@ -53,18 +66,29 @@ public class SignupService {
 	}
 
 	public void update(SignupDTO signupDTO) {
-		Signup signup = new Signup();
-		BeanUtils.copyProperties(signupDTO, signup);
-		signupDao.save(signup);
+		if("technoweb".equalsIgnoreCase(signupDTO.getServiceName())) {
+			Signup signup = new Signup();
+			BeanUtils.copyProperties(signupDTO, signup);
+			signupDao.save(signup);	
+		}else {
+			 //CALLING AGORA REST API
+			 restTemplate.put(restBaseUrl+"/v3/signups", signupDTO);
+		}
 	}
 
-	public SignupDTO findByPid(int pid) {
-		java.util.Optional<Signup> optional= signupDao.findById(pid);
-		if(optional.isEmpty()) {
-			throw new ResourceNotFoundException("Signup","pid",pid);
-		}
+	public SignupDTO findByPid(int pid,String serviceName) {
 		SignupDTO signupDTO = new SignupDTO();
-		BeanUtils.copyProperties(optional.get(), signupDTO);
+		if("technoweb".equalsIgnoreCase(serviceName)) {
+			java.util.Optional<Signup> optional= signupDao.findById(pid);
+			Signup  signup=optional.get();
+			if(optional.isEmpty()) {
+				throw new ResourceNotFoundException("Signup","pid",pid);
+			}	
+			BeanUtils.copyProperties(signup, signupDTO);
+		} else {
+	         //otherwise call agora api
+			signupDTO = restTemplate.getForObject(restBaseUrl+"/v3/signups/"+pid, SignupDTO.class);
+	    }	
 		return signupDTO;
 	}
 
@@ -143,6 +167,9 @@ public class SignupService {
 					});
 
 			List<SignupDTO> externalList = signupResponseList.getBody();
+			for(SignupDTO signupDTO : externalList) {
+				signupDTO.setServiceName("agora");
+			}
 			dtos.addAll(externalList);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -152,6 +179,7 @@ public class SignupService {
 		for (Signup signup : signups) {
 			SignupDTO signupDTO = new SignupDTO();
 			BeanUtils.copyProperties(signup, signupDTO);
+			signupDTO.setServiceName("technoweb");
 			dtos.add(signupDTO);
 		}
 		
