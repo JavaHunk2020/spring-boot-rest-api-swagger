@@ -56,6 +56,11 @@
                      <a href="signups">
                           <button type="button" class="btn btn-warning">All Data!</button>
                      </a>
+                     
+                                     <a href="auth">
+                          <button type="button" class="btn btn-success">Login</button>
+                     </a>
+     
          </div>
          </form>
  	  
