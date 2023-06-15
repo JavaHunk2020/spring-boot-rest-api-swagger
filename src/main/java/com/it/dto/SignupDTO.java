@@ -10,11 +10,21 @@ public class SignupDTO {
 	String mobile;
 	String email;
 	String address;
+	private String bgcolor;
 	private Timestamp doe;
 	private String serviceName;
 	
 	
 	
+	
+	public String getBgcolor() {
+		return bgcolor;
+	}
+
+	public void setBgcolor(String bgcolor) {
+		this.bgcolor = bgcolor;
+	}
+
 	public String getServiceName() {
 		return serviceName;
 	}

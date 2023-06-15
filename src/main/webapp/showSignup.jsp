@@ -71,8 +71,8 @@
       <%
         for(SignupDTO signupDTO : dtos){        
       %>
-      <tr>
-         <td><%=signupDTO.getPid()%></td>
+      <tr style="background-color: <%=signupDTO.getBgcolor()%>">
+         <td><b><%=signupDTO.getPid()%></b></td>
         <td><%=signupDTO.getUsername()%></td>
        <td><%=signupDTO.getPassword()%></td>
         <td>

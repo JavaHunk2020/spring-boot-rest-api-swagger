@@ -2,7 +2,10 @@ package com.it.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -15,7 +18,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.client.RestTemplate;
 
 import com.it.controller.AppResponse;
@@ -25,7 +27,6 @@ import com.it.dto.PatchDTO;
 import com.it.dto.SignupDTO;
 import com.it.dto.UserDTO;
 import com.it.exception.ResourceNotFoundException;
-import com.netflix.discovery.shared.Application;
 
 @Service
 public class SignupService {
@@ -69,6 +70,8 @@ public class SignupService {
 		if("technoweb".equalsIgnoreCase(signupDTO.getServiceName())) {
 			Signup signup = new Signup();
 			BeanUtils.copyProperties(signupDTO, signup);
+			Signup dbsignup=signupDao.findById(signupDTO.getPid()).get();
+			signup.setDoe(dbsignup.getDoe());
 			signupDao.save(signup);	
 		}else {
 			 //CALLING AGORA REST API
@@ -93,7 +96,17 @@ public class SignupService {
 	}
 
 	public void deleteByPid(int pid) {
-		signupDao.deleteById(pid);
+		//
+		Optional<Signup> optional=signupDao.findById(pid);
+		if(optional.isPresent()) {
+			signupDao.deleteById(pid);	
+		} else {
+			   //DELETE FROM REMOTE SERVICE AGORA USING DISCOVERY SERVER
+			String uri=restBaseUrl+"/v3/signups/{pid}";
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("pid", pid+"");
+			restTemplate.delete(restBaseUrl+"/v3/signups/"+pid);
+		}
 	}
 
 	public int save(SignupDTO signupDTO) {
@@ -169,6 +182,7 @@ public class SignupService {
 			List<SignupDTO> externalList = signupResponseList.getBody();
 			for(SignupDTO signupDTO : externalList) {
 				signupDTO.setServiceName("agora");
+				signupDTO.setBgcolor("#f5fff4;");
 			}
 			dtos.addAll(externalList);
 		} catch (Exception ex) {
@@ -180,6 +194,7 @@ public class SignupService {
 			SignupDTO signupDTO = new SignupDTO();
 			BeanUtils.copyProperties(signup, signupDTO);
 			signupDTO.setServiceName("technoweb");
+			signupDTO.setBgcolor("#daf7ff75;");
 			dtos.add(signupDTO);
 		}
 		

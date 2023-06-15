@@ -62,6 +62,7 @@ public class SignupController {
 	public String showSignups(Model model) {
 		List<SignupDTO> dtos = signupService.findAll();
 		// Adding my data inside request scope
+		Collections.shuffle(dtos);
 		model.addAttribute("signups", dtos);
 		return "showSignup";
 	}
