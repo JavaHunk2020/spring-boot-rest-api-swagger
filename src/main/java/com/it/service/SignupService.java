@@ -113,26 +113,21 @@ public class SignupService {
 		Signup signup = new Signup();
 		BeanUtils.copyProperties(signupDTO, signup);
 		signup.setDoe(new Timestamp(new java.util.Date().getTime()));
-		Signup dsignup = signupDao.save(signup);
-		//Making TWO Rest callss
-		/*
-		 * @PostMapping("/signups")
-		 * 
-		 * @ResponseStatus(HttpStatus.CREATED) public SignupDTO
-		 * createSignup(@RequestBody SignupDTO signupDTO) { int
-		 * pid=signupService.save(signupDTO); signupDTO.setPid(pid); return signupDTO; }
-		 */
+        if("TECHNOWEB".equalsIgnoreCase(signupDTO.getServiceName())) {
+        	Signup dsignup = signupDao.save(signup);	
+        }else if("AGORA".equalsIgnoreCase(signupDTO.getServiceName())) {
+        	signupDTO.setDoe(new Timestamp(new java.util.Date().getTime()));
+        	ResponseEntity<SignupDTO> resultSignup = restTemplate.postForEntity(restBaseUrl+"/v3/signups", signupDTO, SignupDTO.class);
+    		SignupDTO  response2= resultSignup.getBody();
+        }
 		//Login api
 		UserDTO userDTO=new UserDTO();
 		userDTO.setUsername(signupDTO.getUsername());
 		userDTO.setPassword(signupDTO.getPassword());
+		//APACHE KAFKA
 		ResponseEntity<AppResponse> result = restTemplate.postForEntity(loginBaseUrl+"/v4/cauth", userDTO, AppResponse.class);
 		AppResponse  response= result.getBody();
-		
-		ResponseEntity<SignupDTO> resultSignup = restTemplate.postForEntity(restBaseUrl+"/v3/signups", signupDTO, SignupDTO.class);
-		SignupDTO  response2= resultSignup.getBody();
-		
-		return dsignup.getPid();
+		return 100;
 	}
 
 	public List<SignupDTO> searchData(String searchText) {

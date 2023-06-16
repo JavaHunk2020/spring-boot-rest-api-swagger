@@ -21,7 +21,11 @@
          <hr/>
         
          <form action="csignup" method="post">
-         
+          <input type="hidden"  name="serviceName" value="${param.serviceName}">
+          <div class="form-group" style="width: 60%">
+            <label><b>Service Name</b></label>
+            <input type="text"  name="tempa" class="form-control" value="${param.serviceName}" readonly="readonly">
+         </div>
           <div class="form-group" style="width: 60%">
             <label>Username</label>
             <input type="text"  name="username" class="form-control">

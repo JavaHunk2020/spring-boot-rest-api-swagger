@@ -42,6 +42,14 @@
               %>
             
          <b>Total Record(s) : <span style="color:blue;"><%=dtos.size()%></span></b>
+            
+            <a href="csignup?serviceName=AGORA">
+            <button type="button" class="btn btn-primary" style="margin-right: 20px;">AGORA</button>
+            </a>
+            <a href="csignup?serviceName=TECHNOWEB">
+            <button style="margin-left: 10px;" type="button" class="btn btn-warning">TECHNOWEB</button>
+            </a>
+         
          <hr/>
          <table class="table table-bordered">
     <thead>
